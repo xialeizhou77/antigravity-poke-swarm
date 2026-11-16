@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none">
+  <!-- 外圈双色进度环（留约 10% 边距） -->
+  <circle cx="64" cy="64" r="50" stroke="#2B303B" stroke-width="8"/>
+  <path d="M 64 14 A 50 50 0 0 1 107.3 89" stroke="#2ED573" stroke-width="8" stroke-linecap="round"/>
+  <path d="M 64 14 A 50 50 0 0 0 26 97" stroke="#FF6B4A" stroke-width="8" stroke-linecap="round"/>
+  <!-- 精灵球主体 -->
+  <circle cx="64" cy="64" r="36" fill="#FFFFFF" stroke="#1E232D" stroke-width="5"/>
+  <path d="M 28 64 A 36 36 0 0 1 100 64 Z" fill="#EF5350" stroke="#1E232D" stroke-width="5"/>
+  <line x1="28" y1="64" x2="100" y2="64" stroke="#1E232D" stroke-width="6"/>
+  <circle cx="64" cy="64" r="11" fill="#FFFFFF" stroke="#1E232D" stroke-width="5"/>
+  <circle cx="64" cy="64" r="5" fill="#FFCA28"/>
+  <!-- 右上皇冠点缀 -->
+  <path d="M 88 22 L 93 13 L 98 20 L 105 14 L 104 26 L 88 26 Z" fill="#FFC83D" stroke="#1E232D" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>

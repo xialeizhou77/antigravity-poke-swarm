@@ -1,0 +1,10 @@
+{
+  "name": "poke_swarm",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "description": "Pokemon-themed Swarm HUD sidecar for Antigravity",
+  "scripts": {
+    "test": "node --test swarm_data.test.mjs"
+  }
+}

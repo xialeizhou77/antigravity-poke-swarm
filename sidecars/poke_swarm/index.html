@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 声明支持浅色与深色模式，避免初始白闪 -->
+  <meta name="color-scheme" content="light dark">
+  <title>Poke Swarm 蜂群看板</title>
+  <script src="/preload.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <!-- 顶部栏：Swarm 切换器、数据源标记 -->
+    <header class="topbar">
+      <div class="topbar-title-group">
+        <span class="brand-dot" aria-hidden="true"></span>
+        <h1 id="swarm-title" class="swarm-title">Poke Swarm</h1>
+        <span id="mode-pill" class="mode-pill">检测中</span>
+      </div>
+      <div class="topbar-actions">
+        <label class="select-wrap" aria-label="选择蜂群任务">
+          <select id="swarm-select" class="swarm-select" title="切换查看本机 Swarm 任务"></select>
+        </label>
+      </div>
+    </header>
+
+    <!-- 主 HUD 胶囊条：宝可梦头像 + 双色进度环 + 实时动作气泡 -->
+    <section class="hud-panel" aria-label="蜂群成员实时状态">
+      <div id="hud-strip" class="hud-strip" role="list"></div>
+      <div class="hud-legend">
+        <span class="legend-chip"><i class="dot-ctx"></i>左环：上下文占用</span>
+        <span class="legend-chip"><i class="dot-quota"></i><span id="legend-secondary-text">右环：模型配额剩余</span></span>
+        <span class="legend-tip">点击头像可更换宝可梦 · 点击名称进入对话</span>
+      </div>
+    </section>
+
+    <!-- 底部选项卡：成员详情 & 消息板实时动态 -->
+    <section class="details-panel">
+      <div class="subtabs" role="tablist" aria-label="详细信息视图">
+        <button type="button" role="tab" id="tab-btn-members" class="subtab active" aria-selected="true" data-panel="members">成员状态</button>
+        <button type="button" role="tab" id="tab-btn-board" class="subtab" aria-selected="false" data-panel="board">消息板 <span id="board-count" class="count-badge">0</span></button>
+      </div>
+      <div id="panel-members" class="subpanel active" role="tabpanel" aria-labelledby="tab-btn-members"></div>
+      <div id="panel-board" class="subpanel" role="tabpanel" aria-labelledby="tab-btn-board"></div>
+    </section>
+  </div>
+
+  <!-- 原生 Popover：宝可梦换肤选择器 -->
+  <div id="skin-popover" popover="auto" class="skin-popover" aria-label="选择宝可梦形象">
+    <div class="skin-popover-head">
+      <span id="skin-target-name">选择宝可梦</span>
+      <button id="skin-reset" type="button" class="link-btn">恢复默认</button>
+    </div>
+    <div id="skin-grid" class="skin-grid"></div>
+  </div>
+
+  <script src="/pokemon.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

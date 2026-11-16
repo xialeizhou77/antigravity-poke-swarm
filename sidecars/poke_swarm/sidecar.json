@@ -1,0 +1,21 @@
+{
+  "command": "node",
+  "args": ["main.mjs"],
+  "restart_policy": "always",
+  "display_name": "Poke Swarm",
+  "description": "宝可梦主题的 Antigravity Swarm 实时状态看板，展示成员宝可梦化身、双色进度环及实时工具调用气泡。",
+  "has_web_ui": true,
+  "agent_permissions": {
+    "allows_user_interactions": false
+  },
+  "ui_config": {
+    "display_name": "Poke Swarm",
+    "views": [
+      {
+        "path": "/",
+        "entrypoint": "SIDECAR_UI_ENTRYPOINT_AUX_PANE",
+        "title": "Poke Swarm"
+      }
+    ]
+  }
+}

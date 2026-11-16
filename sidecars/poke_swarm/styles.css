@@ -1,0 +1,684 @@
+@layer reset, base, components, utilities;
+
+@property --fade-start {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --fade-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@layer reset {
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  h1, h2, p {
+    margin: 0;
+  }
+  button, select {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light dark;
+    /* 宿主 IDE 主题色板自动适配（跟随 preload.js 注入的变量） */
+    --ps-bg: var(--background, light-dark(#f4f5f7, #111318));
+    --ps-surface: var(--card, light-dark(#ffffff, #1b1e26));
+    --ps-surface-alt: var(--secondary, light-dark(#e9ecf1, #242936));
+    --ps-muted-surface: var(--muted, light-dark(#eff1f5, #1f2430));
+    --ps-fg: var(--foreground, light-dark(#181b22, #f1f5f9));
+    --ps-fg-2: var(--secondary-foreground, light-dark(#334155, #cbd5e1));
+    --ps-muted: var(--muted-foreground, light-dark(#5e6775, #9aa4b2));
+    --ps-faint: var(--placeholder, light-dark(#8b95a5, #64748b));
+    --ps-border: var(--border, light-dark(rgba(15, 23, 42, 0.1), rgba(255, 255, 255, 0.1)));
+    --ps-card-border: var(--card-border, var(--ps-border));
+    --ps-primary: var(--primary, light-dark(#2563eb, #60a5fa));
+    --ps-primary-fg: var(--primary-foreground, #ffffff);
+    --ps-err-fg: var(--error, light-dark(#dc2626, #f87171));
+
+    /* HUD 面板与气泡随宿主皮肤明暗/色相自动混色 */
+    --ps-hud-bg: color-mix(in srgb, var(--ps-surface) 82%, var(--ps-surface-alt));
+    --ps-hud-border: var(--ps-card-border);
+    --ps-hud-shadow: light-dark(0 6px 20px rgba(15, 23, 42, 0.08), 0 10px 28px rgba(0, 0, 0, 0.24));
+    --ps-pill-bg: color-mix(in srgb, var(--ps-fg) 6%, var(--ps-surface-alt));
+    --ps-pill-border: color-mix(in srgb, var(--ps-fg) 10%, transparent);
+    --ps-pill-fg: var(--ps-fg-2);
+    --ps-ring-track: color-mix(in srgb, var(--ps-fg) 14%, transparent);
+    --ps-avatar-ring: color-mix(in srgb, var(--ps-fg) 18%, transparent);
+
+    --ps-ctx-color: light-dark(#e11d48, #fb7185);
+    --ps-quota-color: light-dark(#059669, #34d399);
+    --ps-working-fg: light-dark(#15803d, #4ade80);
+    --ps-thinking-fg: light-dark(#4338ca, #a5b4fc);
+    --ps-waiting-fg: var(--ps-muted);
+    --ps-killed-fg: var(--ps-faint);
+    --ps-warn-fg: light-dark(#b45309, #fbbf24);
+    --ps-font: var(--font-family, "Google Sans Flex", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    --ps-mono: var(--editor-font-family, "Google Sans Code", ui-monospace, SFMono-Regular, Menlo, monospace);
+
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: color-mix(in srgb, var(--ps-fg) 22%, transparent);
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  :root[data-theme="light"] {
+    color-scheme: light;
+  }
+
+  body {
+    box-sizing: border-box;
+    background: var(--ps-bg);
+    color: var(--ps-fg);
+    font-family: var(--ps-font);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .shell, .shell :is(div, section, header, article, button, select, span, i),
+  .skin-popover, .skin-popover :is(div, button, span) {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .shell {
+    max-inline-size: 920px;
+    margin-inline: auto;
+    padding: 12px 14px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* 顶部工具条 */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .topbar-title-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-inline-size: 0;
+  }
+
+  .brand-dot {
+    inline-size: 9px;
+    block-size: 9px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--ps-lead-accent, #ff7b54), var(--ps-primary));
+    flex: none;
+  }
+
+  .swarm-title {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mode-pill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ps-primary) 15%, transparent);
+    color: var(--ps-primary);
+    white-space: nowrap;
+    flex: none;
+  }
+
+  .mode-pill.empty {
+    background: color-mix(in srgb, #f59e0b 16%, transparent);
+    color: var(--ps-warn-fg);
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-inline-size: 0;
+  }
+
+  .swarm-select {
+    max-inline-size: 240px;
+    block-size: 28px;
+    padding: 0 8px;
+    border-radius: 7px;
+    border: 1px solid var(--ps-border);
+    background: var(--ps-surface);
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .ghost-btn {
+    block-size: 28px;
+    padding: 0 10px;
+    border-radius: 7px;
+    border: 1px solid var(--ps-border);
+    background: var(--ps-surface);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .ghost-btn:hover {
+    background: color-mix(in srgb, var(--ps-fg) 6%, var(--ps-surface));
+  }
+
+  .ghost-btn:focus-visible,
+  .swarm-select:focus-visible,
+  .avatar-btn:focus-visible,
+  .member-name-btn:focus-visible,
+  .subtab:focus-visible,
+  .skin-item:focus-visible {
+    outline: 2px solid var(--ps-primary);
+    outline-offset: 2px;
+  }
+
+  /* 主 HUD 胶囊面板（自动跟随宿主主题皮肤与宝可梦皮肤色调） */
+  .hud-panel {
+    background: var(--ps-hud-bg);
+    border: 1px solid var(--ps-hud-border);
+    border-radius: 18px;
+    padding: 14px 12px 10px;
+    box-shadow: var(--ps-hud-shadow);
+    color: var(--ps-fg);
+  }
+
+  .hud-strip {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: space-around;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 2px 4px 4px;
+    --fade-size: 2.25rem;
+    --fade-dir: right;
+    --fade-start-pos: 0;
+    --fade-end-pos: 100%;
+    scroll-padding-inline: var(--fade-size);
+    mask:
+      linear-gradient(black, black) no-clip subtract,
+      linear-gradient(to var(--fade-dir), black, transparent) var(--fade-start-pos) 0 / var(--fade-start) 100% no-repeat no-clip,
+      linear-gradient(to var(--fade-dir), transparent, black) var(--fade-end-pos) 0 / var(--fade-end) 100% no-repeat no-clip;
+    animation: reveal-fade-start linear both, hide-fade-end linear both;
+    animation-timeline: scroll(self inline);
+    animation-range: 0 var(--fade-size), calc(100% - var(--fade-size)) 100%;
+  }
+
+  .hud-strip:dir(rtl) {
+    --fade-dir: left;
+    --fade-start-pos: 100%;
+    --fade-end-pos: 0;
+  }
+
+  .hud-strip.more-start {
+    --fade-start: var(--fade-size);
+  }
+
+  .hud-strip.more-end {
+    --fade-end: var(--fade-size);
+  }
+
+  @supports not (scrollbar-width: none) {
+    .hud-strip::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  @keyframes reveal-fade-start {
+    to {
+      --fade-start: var(--fade-size);
+    }
+  }
+
+  @keyframes hide-fade-end {
+    from {
+      --fade-end: var(--fade-size);
+    }
+  }
+
+  .hud-card {
+    flex: 1 0 98px;
+    max-inline-size: 132px;
+    min-inline-size: 94px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    padding: 4px 2px;
+    border-radius: 12px;
+    transition: background-color 0.18s ease;
+  }
+
+  .hud-card:hover {
+    background: color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 8%, transparent);
+  }
+
+  /* 顶部动作胶囊气泡 */
+  .activity-pill {
+    inline-size: 100%;
+    max-inline-size: 124px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 10%, var(--ps-pill-bg));
+    border: 1px solid color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 22%, var(--ps-pill-border));
+    color: var(--ps-pill-fg);
+    font-size: 11px;
+    line-height: 1.3;
+    min-inline-size: 0;
+  }
+
+  .activity-icon {
+    flex: none;
+    font-size: 11px;
+  }
+
+  .activity-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-inline-size: 0;
+  }
+
+  .activity-pill.thinking .activity-icon {
+    animation: pulse-soft 1.6s ease-in-out infinite;
+  }
+
+  /* 圆形头像与双色进度环 */
+  .avatar-stage {
+    position: relative;
+    inline-size: 86px;
+    block-size: 86px;
+    display: grid;
+    place-items: center;
+  }
+
+  .ring-svg {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    pointer-events: none;
+  }
+
+  .avatar-btn {
+    position: relative;
+    inline-size: 66px;
+    block-size: 66px;
+    padding: 0;
+    border-radius: 999px;
+    border: 2px solid color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 45%, var(--ps-avatar-ring));
+    overflow: hidden;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  .avatar-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.06);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 24%, transparent);
+  }
+
+  .avatar-btn.killed {
+    filter: grayscale(0.75) opacity(0.65);
+  }
+
+  .avatar-btn.working svg,
+  .avatar-btn.thinking svg {
+    animation: poke-bob 2.6s ease-in-out infinite;
+  }
+
+  /* 协调者左上角皇冠 */
+  .crown-badge {
+    position: absolute;
+    inset-block-start: -2px;
+    inset-inline-start: -2px;
+    inline-size: 24px;
+    block-size: 24px;
+    border-radius: 999px;
+    background: var(--ps-hud-bg);
+    border: 1.5px solid #eab308;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* 底部成员名与双百分比 */
+  .member-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  .member-name-btn {
+    all: unset;
+    cursor: pointer;
+    max-inline-size: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ps-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 4px;
+    padding: 0 3px;
+  }
+
+  .member-name-btn:hover {
+    text-decoration: underline;
+    color: color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 75%, var(--ps-fg));
+  }
+
+  .member-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .st-label.working { color: var(--ps-working-fg); font-weight: 600; }
+  .st-label.thinking { color: var(--ps-thinking-fg); }
+  .st-label.waiting { color: var(--ps-waiting-fg); }
+  .st-label.killed { color: var(--ps-killed-fg); }
+  .st-label.quota,
+  .st-label.error { color: var(--ps-warn-fg); font-weight: 600; }
+
+  .pct-ctx { color: var(--ps-ctx-color); font-weight: 600; }
+  .pct-sep { color: var(--ps-faint); }
+  .pct-sec { color: var(--ps-quota-color); font-weight: 600; }
+
+  .hud-legend {
+    margin-block-start: 6px;
+    padding-block-start: 7px;
+    border-block-start: 1px solid var(--ps-border);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--ps-muted);
+  }
+
+  .legend-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .dot-ctx,
+  .dot-quota {
+    inline-size: 7px;
+    block-size: 7px;
+    border-radius: 999px;
+    display: inline-block;
+  }
+
+  .dot-ctx { background: var(--ps-ctx-color); }
+  .dot-quota { background: var(--ps-quota-color); }
+
+  .legend-tip {
+    margin-inline-start: auto;
+    color: var(--ps-faint);
+  }
+
+  /* 下方详情与消息板 */
+  .details-panel {
+    background: var(--ps-surface);
+    border: 1px solid var(--ps-border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .subtabs {
+    display: flex;
+    border-block-end: 1px solid var(--ps-border);
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .subtab {
+    background: transparent;
+    border: none;
+    padding: 9px 10px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ps-muted);
+    cursor: pointer;
+    border-block-end: 2px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .subtab.active {
+    color: var(--ps-fg);
+    border-block-end-color: var(--ps-primary);
+  }
+
+  .count-badge {
+    font-size: 11px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ps-fg) 8%, transparent);
+    color: var(--ps-muted);
+  }
+
+  .subpanel {
+    display: none;
+    padding: 10px 12px;
+    max-block-size: 360px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  .subpanel.active {
+    display: block;
+  }
+
+  .detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 22%, var(--ps-border));
+    border-inline-start: 3px solid var(--poke-accent, var(--ps-primary));
+    background: color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 5%, var(--ps-surface));
+  }
+
+  .detail-poke-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 500;
+    background: color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 16%, transparent);
+    color: color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 78%, var(--ps-fg));
+  }
+
+  .detail-main {
+    min-inline-size: 0;
+    flex: 1;
+  }
+
+  .detail-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 12.5px;
+  }
+
+  .detail-model {
+    font-family: var(--ps-mono);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--ps-muted);
+  }
+
+  .detail-sub {
+    margin-block-start: 2px;
+    font-size: 12px;
+    color: var(--ps-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .board-msg {
+    padding: 8px 10px;
+    border-radius: 9px;
+    border: 1px solid var(--ps-border);
+    margin-block-end: 8px;
+  }
+
+  .board-msg-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--ps-muted);
+    margin-block-end: 3px;
+  }
+
+  .board-msg-agent {
+    font-weight: 600;
+    color: var(--ps-fg);
+  }
+
+  .board-msg-text {
+    font-size: 12.5px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* 换肤 Popover */
+  .skin-popover {
+    border: 1px solid var(--ps-border);
+    border-radius: 14px;
+    padding: 12px;
+    background: var(--ps-surface);
+    color: var(--ps-fg);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    inline-size: min(320px, 90vw);
+  }
+
+  .skin-popover::backdrop {
+    background: rgba(0, 0, 0, 0.32);
+  }
+
+  .skin-popover-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-block-end: 10px;
+    font-weight: 600;
+  }
+
+  .link-btn {
+    background: transparent;
+    border: none;
+    color: var(--ps-primary);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 4px;
+  }
+
+  .skin-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .skin-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 2px;
+    border-radius: 10px;
+    border: 1px solid var(--ps-border);
+    background: transparent;
+    cursor: pointer;
+    font-size: 10.5px;
+  }
+
+  .skin-item.selected {
+    border-color: var(--poke-accent, var(--ps-primary));
+    background: color-mix(in srgb, var(--poke-accent, var(--ps-primary)) 14%, transparent);
+  }
+
+  .skin-thumb {
+    inline-size: 40px;
+    block-size: 40px;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  @keyframes poke-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+  }
+
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .activity-pill.thinking .activity-icon,
+    .avatar-btn.working svg,
+    .avatar-btn.thinking svg {
+      animation: none;
+    }
+    .avatar-btn {
+      transition: none;
+    }
+  }
+}

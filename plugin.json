@@ -1,0 +1,15 @@
+{
+  "name": "poke-swarm",
+  "displayName": "Poke Swarm HUD",
+  "version": "1.0.0",
+  "description": "宝可梦风格的 Antigravity 蜂群（Swarm）实时监控看板：展示成员宝可梦化身、上下文与配额双色进度环、实时工具调用气泡及消息板动态。",
+  "author": "xialeizhou77",
+  "homepage": "https://github.com/xialeizhou77/antigravity-poke-swarm",
+  "repository": "https://github.com/xialeizhou77/antigravity-poke-swarm",
+  "logo": "assets/logo.svg",
+  "suggestedPrompts": [
+    "打开宝可梦蜂群看板",
+    "查看当前 Swarm 成员的上下文与配额状态",
+    "在 Poke Swarm 中切换查看最近的蜂群任务"
+  ]
+}
